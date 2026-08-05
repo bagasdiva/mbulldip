@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menunggu Diva Pulang</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;padding:0;background:radial-gradient(circle at center,#ffbd8a 0%,#ff6b9a 60%,#e24982 100%);color:#fff9f0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;overflow-x:hidden;}
+.font-cursive{font-family:'Great Vibes',cursive;}
+.font-serif{font-family:'Playfair Display',serif;}
+.heart-mask{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z'/%3E%3C/svg%3E");-webkit-mask-position:center;-webkit-mask-repeat:no-repeat;-webkit-mask-size:300vmax;mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z'/%3E%3C/svg%3E");mask-position:center;mask-repeat:no-repeat;mask-size:300vmax;transition:-webkit-mask-size 1.5s ease-in-out,mask-size 1.5s ease-in-out,opacity 1.5s ease-in-out;}
+.heart-mask.hide{-webkit-mask-size:0vmax;mask-size:0vmax;opacity:0;pointer-events:none;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#ff6b9a;border-radius:10px;}
+input[type="checkbox"]{accent-color:#e24982;cursor:pointer;}
+</style>
+</head>
+<body class="flex flex-col items-center justify-start relative pb-20">
+
+<!-- Animasi Layar Pembuka (Splash Screen) -->
+<div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#fca5a5] heart-mask overflow-hidden">
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] rounded-full blur-[50px] bg-[#be185d] opacity-90 z-0"></div>
+    <svg class="absolute z-10 w-10 h-10 md:w-12 md:h-12 text-white opacity-90 stroke-current fill-none top-[22%] left-[15%] md:top-[25%] md:left-[30%] -rotate-12" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    <svg class="absolute z-10 w-7 h-7 md:w-8 md:h-8 text-white opacity-90 stroke-current fill-none top-[35%] left-[20%] md:top-[38%] md:left-[34%] rotate-12" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    <div class="z-20 text-center flex flex-col items-center justify-center w-full px-4">
+        <h1 class="font-cursive text-5xl md:text-7xl mb-3 text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)] tracking-wide">menghitung mundur</h1>
+        <h2 id="splash-sisa-hari" class="font-serif italic text-2xl md:text-3xl mb-5 text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)] opacity-95 font-medium"></h2>
+        <h3 class="font-serif text-[1.7rem] md:text-[2.5rem] uppercase tracking-widest text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)] leading-tight">AYANG KEMBALI<br>PULANG KKN</h3>
+    </div>
+</div>
+
+<!-- Modal Pop-up Kustom (Pengganti Alert Browser) -->
+<div id="custom-modal" class="fixed inset-0 z-[200] hidden items-center justify-center opacity-0 transition-opacity duration-300">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div id="modal-content" class="bg-white/30 backdrop-blur-xl border border-white/40 p-8 rounded-3xl shadow-2xl z-10 w-11/12 max-w-sm text-center transform scale-95 transition-transform duration-300">
+        <div id="modal-icon" class="text-6xl mb-4 drop-shadow-md">💌</div>
+        <h3 id="modal-title" class="font-serif text-2xl font-bold text-white mb-2 drop-shadow-sm">Pemberitahuan</h3>
+        <p id="modal-message" class="text-[#fff9f0] opacity-95 mb-8 text-sm md:text-base leading-relaxed font-medium">Pesan di sini.</p>
+        <button onclick="closeModal()" class="px-8 py-3 bg-gradient-to-r from-[#e24982] to-[#ff6b9a] text-white font-bold rounded-full shadow-lg hover:scale-105 transition-transform w-full">Tutup</button>
+    </div>
+</div>
+
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-[110] hidden transition-opacity" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar Menu -->
+<!-- Sidebar Menu Modern (Glassmorphism) -->
+<div id="sidebar" class="fixed inset-y-0 right-0 w-72 md:w-80 bg-white/10 backdrop-blur-2xl border-l border-white/30 shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-[120] transform translate-x-full transition-transform duration-500 ease-out flex flex-col rounded-l-[2rem]">
+    
+    <!-- Header Sidebar -->
+    <div class="flex items-center justify-between p-6 border-b border-white/20">
+        <h2 class="font-serif text-2xl text-white font-bold italic drop-shadow-sm">Menu Ekstra</h2>
+        <button onclick="toggleSidebar()" class="text-white bg-white/10 hover:bg-white/30 p-2 rounded-full transition-all hover:scale-110 shadow-sm border border-transparent hover:border-white/30">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+    </div>
+    
+    <!-- Link Halaman -->
+    <div class="flex flex-col p-4 gap-3 flex-grow mt-2">
+        <button onclick="switchTab('gallery')" class="text-left flex items-center gap-4 p-4 text-white bg-white/5 hover:bg-white/20 rounded-2xl border border-transparent hover:border-white/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-md font-medium tracking-wide">
+            <span class="text-2xl drop-shadow-sm">📸</span> Galeri Kita
+        </button>
+        <button onclick="switchTab('music')" class="text-left flex items-center gap-4 p-4 text-white bg-white/5 hover:bg-white/20 rounded-2xl border border-transparent hover:border-white/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-md font-medium tracking-wide">
+            <span class="text-2xl drop-shadow-sm">🎵</span> Playlist Musik
+        </button>
+    </div>
+
+    <!-- Kotak Surat Rahasia (Floating Card) -->
+    <div class="m-5 mb-8 p-6 bg-white/20 rounded-3xl border border-white/40 shadow-lg relative overflow-hidden group">
+        <!-- Hiasan Blur Background Card -->
+        <div class="absolute -top-10 -right-10 w-24 h-24 bg-pink-400 rounded-full blur-[30px] opacity-40"></div>
+        
+        <div class="flex items-center gap-3 mb-3 relative z-10">
+            <div class="p-2 bg-white/20 rounded-xl shadow-sm border border-white/30">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-white"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+            </div>
+            <h3 class="text-white font-bold tracking-wider uppercase text-sm drop-shadow-sm">Pesan Rahasia</h3>
+        </div>
+        <p class="text-[0.75rem] text-white/90 mb-5 leading-relaxed relative z-10 font-medium">Terkunci otomatis. Terbuka saat hitung mundur selesai.</p>
+        
+        <button id="btn-surat" onclick="showModal('Eits, Belum Waktunya!', 'Sabar ya, tunggu sampai tanggal 11 Agustus buat buka pesan rahasia ini 🤭', '🔒')" class="relative z-10 w-full py-3.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold tracking-wide shadow-inner flex justify-center items-center gap-2 cursor-not-allowed border border-white/40 transition-all hover:scale-[1.02]">
+            <span>Terkunci 🔒</span>
+        </button>
+    </div>
+</div>
+
+<!-- HEADER (Efek Scroll & Glassmorphism Putih) -->
+<header id="main-header" class="fixed left-1/2 -translate-x-1/2 top-6 md:top-8 w-[92%] max-w-4xl flex items-center justify-between p-1.5 md:p-2 bg-white/20 backdrop-blur-md rounded-full shadow-lg border border-white/30 z-50 transition-all duration-300 ease-in-out">
+    <a href="#" class="pl-3 md:pl-6 py-1 flex items-center">
+        <img src="2.png" alt="MD Logo" class="h-6 md:h-8 object-contain invert drop-shadow-md hover:scale-105 transition-transform">
+    </a>
+    <nav class="flex items-center gap-1 md:gap-2 pr-1 md:pr-2 text-[0.65rem] md:text-xs font-bold uppercase tracking-widest text-white drop-shadow-sm">
+        <button id="btn-timer" onclick="switchTab('timer')" class="nav-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2.5 bg-[#ff6b9a] text-white rounded-full shadow-md transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span class="hidden sm:inline">Timer</span>
+        </button>
+        <button id="btn-note" onclick="switchTab('note')" class="nav-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2.5 hover:bg-white/30 rounded-full transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg><span class="hidden sm:inline">Note</span>
+        </button>
+        <button id="btn-todo" onclick="switchTab('todo')" class="nav-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2.5 hover:bg-white/30 rounded-full transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span class="hidden sm:inline">To-Do</span>
+        </button>
+        <button onclick="toggleSidebar()" class="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2.5 hover:bg-white/30 rounded-full transition ml-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+        </button>
+    </nav>
+</header>
+
+<!-- AREA KONTEN -->
+<main class="w-full mt-36 md:mt-40 flex flex-col items-center px-4 min-h-[80vh]">
+    
+    <div id="view-timer" class="tab-content text-center w-full flex flex-col items-center">
+        <h3 class="text-xs md:text-sm tracking-[0.4em] uppercase mb-4 font-semibold drop-shadow-sm">BYE - BYE KKN ✨ MENUNGGU DIPDIP PULANG</h3>
+        <div class="mb-6 md:mb-10 text-xs md:text-sm font-bold tracking-widest bg-white/20 px-6 py-2 rounded-full border border-white/30 shadow-sm inline-flex flex-col md:flex-row gap-1 md:gap-6">
+            <span id="date-now" class="opacity-90">Hari Ini: --</span><span class="hidden md:inline opacity-50">|</span><span class="text-[#fff9f0]">Target: Selasa, 11 Agustus 2026</span>
+        </div>
+        <div id="countdown" class="text-5xl md:text-[9rem] font-extrabold mb-4 md:mb-2 tracking-tight md:tracking-normal drop-shadow-md flex justify-center items-center gap-2 md:gap-4">
+            <span id="days">00</span><span class="text-3xl md:text-8xl font-light opacity-50 pb-1 md:pb-6">:</span>
+            <span id="hours">00</span><span class="text-3xl md:text-8xl font-light opacity-50 pb-1 md:pb-6">:</span>
+            <span id="minutes">00</span><span class="text-3xl md:text-8xl font-light opacity-50 pb-1 md:pb-6">:</span>
+            <span id="seconds">00</span>
+        </div>
+        <div class="flex justify-center gap-7 md:gap-32 text-[0.6rem] md:text-sm uppercase tracking-widest font-bold opacity-90 mb-16 md:mb-20 pl-2">
+            <span>Hari</span><span>Jam</span><span>Menit</span><span>Detik</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4 text-xs md:text-sm font-bold tracking-wide">
+            <button class="px-6 py-3 bg-[#fff9f0] text-[#ff6b9a] rounded-full shadow-lg hover:scale-105 transition transform">Mode Siaga</button>
+            <a href="#" id="wa-btn" class="px-6 py-3 border-2 border-[#fff9f0] rounded-full hover:bg-white/20 transition flex items-center shadow-lg">Kirim Pesan</a>
+        </div>
+    </div>
+
+    <div id="view-note" class="tab-content hidden text-center w-full max-w-xl">
+        <h1 class="font-cursive text-5xl md:text-6xl text-white mb-2 drop-shadow-sm">Pesan Buat Ayang</h1>
+        <p class="font-serif italic text-lg mb-8 opacity-90">Dibaca ya cantiknya aku...</p>
+        <div class="bg-white/20 rounded-3xl p-6 md:p-10 shadow-lg border border-white/30 text-left relative overflow-hidden">
+            <div class="absolute -top-4 -right-4 text-6xl opacity-20 -rotate-12">🎁</div>
+            <div class="font-medium space-y-5 text-[#fff9f0] leading-relaxed text-[0.95rem] md:text-base opacity-95">
+                <p class="text-xl font-bold mb-2">Halo Ayang ❤️</p>
+                <p>Udah bentar lagi nih tanggal 11! Gimana KKN-nya di sana? Pasti capek banget ya ngurusin proker terus dari kemarin? Hehe.</p>
+                <p>Nanti pas kamu udah pulang, aku udah nyiapin <strong>kado spesial</strong> lho buat kamu. Masih rahasia dong pastinya, biar jadi surprise pas kita ketemu nanti 🤭.</p>
+                <p>Pokoknya kamu tetep semangat ya nyelesaiin sisa tugasnya. Jaga kesehatan terus di sana, jangan sampai telat makan.</p>
+                <p class="font-bold italic text-center mt-8 text-lg block border-t border-white/20 pt-6">Nggak sabar banget pengen cepet-cepet tanggal 11 terus jketemu ayang.<br>Semangat terus ya cantiknya aku! ✨</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-todo" class="tab-content hidden text-center w-full max-w-lg">
+        <h1 class="font-cursive text-5xl md:text-6xl text-white mb-2 drop-shadow-sm">Rencana Kita</h1>
+        <p class="font-serif italic text-lg mb-8 opacity-90">List wajib pas ayang udah balik nanti.</p>
+        <div class="flex flex-col gap-3 text-left">
+            <label class="group flex items-center gap-4 bg-white/20 hover:bg-white/30 p-4 md:p-5 rounded-2xl cursor-pointer transition-all border border-white/20 shadow-sm hover:shadow-md">
+                <div class="relative flex items-center justify-center w-6 h-6 flex-shrink-0">
+                    <input type="checkbox" class="peer appearance-none w-6 h-6 border-2 border-white/60 rounded-full checked:bg-[#ff6b9a] checked:border-[#ff6b9a] transition-all cursor-pointer">
+                    <svg class="absolute w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div><span class="font-medium text-white md:text-lg group-hover:translate-x-1 transition-transform peer-checked:line-through peer-checked:opacity-50">Makan Bakso & kuliner favorit berdua</span>
+            </label>
+            <label class="group flex items-center gap-4 bg-white/20 hover:bg-white/30 p-4 md:p-5 rounded-2xl cursor-pointer transition-all border border-white/20 shadow-sm hover:shadow-md">
+                <div class="relative flex items-center justify-center w-6 h-6 flex-shrink-0">
+                    <input type="checkbox" class="peer appearance-none w-6 h-6 border-2 border-white/60 rounded-full checked:bg-[#ff6b9a] checked:border-[#ff6b9a] transition-all cursor-pointer">
+                    <svg class="absolute w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div><span class="font-medium text-white md:text-lg group-hover:translate-x-1 transition-transform peer-checked:line-through peer-checked:opacity-50">Jalan-jalan sore keliling Purwokerto</span>
+            </label>
+            <label class="group flex items-center gap-4 bg-white/20 hover:bg-white/30 p-4 md:p-5 rounded-2xl cursor-pointer transition-all border border-white/20 shadow-sm hover:shadow-md">
+                <div class="relative flex items-center justify-center w-6 h-6 flex-shrink-0">
+                    <input type="checkbox" class="peer appearance-none w-6 h-6 border-2 border-white/60 rounded-full checked:bg-[#ff6b9a] checked:border-[#ff6b9a] transition-all cursor-pointer">
+                    <svg class="absolute w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div><span class="font-medium text-white md:text-lg group-hover:translate-x-1 transition-transform peer-checked:line-through peer-checked:opacity-50">Dengerin Ayang cerita KKN</span>
+            </label>
+            <label class="group flex items-center gap-4 bg-white/20 hover:bg-white/30 p-4 md:p-5 rounded-2xl cursor-pointer transition-all border border-white/20 shadow-sm hover:shadow-md">
+                <div class="relative flex items-center justify-center w-6 h-6 flex-shrink-0">
+                    <input type="checkbox" class="peer appearance-none w-6 h-6 border-2 border-white/60 rounded-full checked:bg-[#ff6b9a] checked:border-[#ff6b9a] transition-all cursor-pointer">
+                    <svg class="absolute w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div><span class="font-medium text-white md:text-lg group-hover:translate-x-1 transition-transform peer-checked:line-through peer-checked:opacity-50">Masak Masak Sama Ayang</span>
+            </label>
+        </div>
+    </div>
+
+    <div id="view-gallery" class="tab-content hidden text-center w-full max-w-4xl">
+        <h1 class="font-cursive text-5xl md:text-6xl text-white mb-2 drop-shadow-sm">Galeri Kenangan</h1>
+        <p class="font-serif italic text-lg mb-8 opacity-90">Kumpulan momen manis kita berdua.</p>
+        
+        <!-- Grid Foto (2 kolom di HP, 3 kolom di Desktop) -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            
+            <!-- Foto 1 -->
+            <div class="aspect-square bg-white/20 rounded-2xl border border-white/30 overflow-hidden hover:scale-105 transition-transform duration-300 shadow-lg group">
+                <img src="foto/IMG_4544.jpeg" alt="Kenangan 1" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+            </div>
+
+            <!-- Foto 2 -->
+            <div class="aspect-square bg-white/20 rounded-2xl border border-white/30 overflow-hidden hover:scale-105 transition-transform duration-300 shadow-lg group">
+                <img src="foto/IMG_4913.jpeg" alt="Kenangan 2" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+            </div>
+
+            <!-- Foto 3 -->
+            <div class="aspect-square bg-white/20 rounded-2xl border border-white/30 overflow-hidden hover:scale-105 transition-transform duration-300 shadow-lg group">
+                <img src="foto/IMG_5539.jpeg" alt="Kenangan 3" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+            </div>
+
+            <!-- Foto 4 -->
+            <div class="aspect-square bg-white/20 rounded-2xl border border-white/30 overflow-hidden hover:scale-105 transition-transform duration-300 shadow-lg group">
+                <img src="foto/IMG_5701.jpeg" alt="Kenangan 4" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+            </div>
+
+            <!-- Foto 5 -->
+            <div class="aspect-square bg-white/20 rounded-2xl border border-white/30 overflow-hidden hover:scale-105 transition-transform duration-300 shadow-lg group">
+                <img src="foto/IMG_5871.jpeg" alt="Kenangan 5" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+            </div>
+
+            <!-- Foto 6 -->
+            <div class="aspect-square bg-white/20 rounded-2xl border border-white/30 overflow-hidden hover:scale-105 transition-transform duration-300 shadow-lg group">
+                <img src="foto/IMG_6962.jpeg" alt="Kenangan 6" class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+            </div>
+
+        </div>
+    </div>
+
+    <div id="view-music" class="tab-content hidden text-center w-full max-w-lg">
+        <h1 class="font-cursive text-5xl md:text-6xl text-white mb-2 drop-shadow-sm">Playlist Ayang</h1>
+        <p class="font-serif italic text-lg mb-8 opacity-90">Dengerin ini biar kangennya sedikit terobati.</p>
+        <div class="w-full bg-white/10 rounded-[2rem] p-4 shadow-xl border border-white/30">
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3EYplnYAlnKMrTeZARujEH?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+    </div>
+
+</main>
+
+<script>
+// === LOGIKA TAMPILAN CUSTOM MODAL POP-UP ===
+function showModal(title, message, icon) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-message').innerText = message;
+    document.getElementById('modal-icon').innerText = icon;
+    
+    const modal = document.getElementById('custom-modal');
+    const modalContent = document.getElementById('modal-content');
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+    }, 10);
+}
+
+function closeModal() {
+    const modal = document.getElementById('custom-modal');
+    const modalContent = document.getElementById('modal-content');
+    
+    modal.classList.add('opacity-0');
+    modalContent.classList.remove('scale-100');
+    modalContent.classList.add('scale-95');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }, 300);
+}
+
+// === LOGIKA TAB VIEW ===
+function switchTab(tabName){
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.add('hidden'));
+    
+    document.getElementById('view-' + tabName).classList.remove('hidden');
+    
+    const btns = document.querySelectorAll('.nav-btn');
+    btns.forEach(btn => {
+        btn.classList.remove('bg-[#ff6b9a]', 'text-white', 'shadow-md');
+        btn.classList.add('hover:bg-white/30');
+    });
+    
+    const activeBtn = document.getElementById('btn-' + tabName);
+    if (activeBtn) {
+        activeBtn.classList.add('bg-[#ff6b9a]', 'text-white', 'shadow-md');
+        activeBtn.classList.remove('hover:bg-white/30');
+    }
+    
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar.classList.contains('translate-x-full')) { 
+        toggleSidebar(); 
+    }
+}
+
+// === LOGIKA SIDEBAR MENU ===
+function toggleSidebar(){
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar.classList.contains('translate-x-full')){
+        sidebar.classList.remove('translate-x-full');
+        overlay.classList.remove('hidden');
+    } else {
+        sidebar.classList.add('translate-x-full');
+        overlay.classList.add('hidden');
+    }
+}
+
+// === LOGIKA TRANSISI HEADER SCROLL ===
+window.addEventListener('scroll', () => {
+    const header = document.getElementById('main-header');
+    if (window.scrollY > 20) {
+        header.classList.remove('top-6', 'md:top-8', 'w-[92%]', 'max-w-4xl', 'rounded-full');
+        header.classList.add('top-0', 'w-full', 'max-w-full', 'rounded-none');
+    } else {
+        header.classList.remove('top-0', 'w-full', 'max-w-full', 'rounded-none');
+        header.classList.add('top-6', 'md:top-8', 'w-[92%]', 'max-w-4xl', 'rounded-full');
+    }
+});
+
+// === PENGATURAN WHATSAPP & WAKTU ===
+const waNumber = "6281234567890";
+const waMessage = encodeURIComponent("Halo Ayang! Yeay udah tanggal 11, selamat pulang KKN! 🎉❤️");
+document.getElementById("wa-btn").href = `https://wa.me/${waNumber}`;
+
+const target = new Date("August 11, 2026 00:00:00").getTime();
+const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+
+function updateTimeAndUI(){
+    const now = new Date();
+    const distance = target - now.getTime();
+    
+    const sisaHariText = document.getElementById('splash-sisa-hari');
+    const daysLeft = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const isToday = now.getDate() === 11 && now.getMonth() === 7 && now.getFullYear() === 2026;
+    
+    if(isToday){
+        sisaHariText.innerText = "hari ini";
+    } else if(daysLeft >= 0){
+        sisaHariText.innerText = `sisa ${daysLeft} hari`;
+    } else {
+        sisaHariText.innerText = "sudah kembali";
+    }
+    
+    document.getElementById('date-now').innerText = `Hari Ini: ${now.toLocaleDateString('id-ID', dateOptions)}`;
+    
+    const btnSurat = document.getElementById('btn-surat');
+    if (distance <= 0) {
+        btnSurat.innerHTML = 'Buka Pesan 💌';
+        btnSurat.classList.remove('bg-white/20', 'cursor-not-allowed', 'border-white/30');
+        btnSurat.classList.add('bg-[#fff9f0]', 'text-[#e24982]', 'cursor-pointer', 'shadow-lg');
+        btnSurat.onclick = function() {
+            showModal('Pesan Spesial', 'Ayangku sayang, selamat datang kembali... ❤️ huuhu angen aney ketemu ayang pengen peyuk lama lama, pegi cama ayang, main uno cama ayang, ngapain aja cama ayang... angen aneyy maw tium tium ayang yang anyakkk ', '💌');
+        };
+    }
+    
+    if(distance < 0){
+        document.getElementById("days").innerText = "00";
+        document.getElementById("hours").innerText = "00";
+        document.getElementById("minutes").innerText = "00";
+        document.getElementById("seconds").innerText = "00";
+        return distance; 
+    }
+    
+    document.getElementById("days").innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+    document.getElementById("hours").innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+    document.getElementById("minutes").innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    document.getElementById("seconds").innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+    return distance;
+}
+
+updateTimeAndUI();
+setInterval(updateTimeAndUI, 1000);
+
+// === LOGIKA TRANSISI SPLASH SCREEN ===
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        splash.classList.add('hide'); 
+        setTimeout(() => {splash.style.display = 'none';}, 1500); 
+    }, 3500); 
+});
+</script>
+</body>
+</html>
